@@ -1,4 +1,4 @@
-# Le Pain Levé — outil de commande
+ # Le Pain Levé — outil de commande
 
 Ce dossier contient tout ce qu'il faut : la page de commande (`index.html`)
 et la petite fonction serveur qui crée le paiement Stripe déjà rempli
