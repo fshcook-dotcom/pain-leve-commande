@@ -503,6 +503,15 @@
 
   // ---- Paiement : appel à la fonction serveur qui crée la session Stripe ----
   // (le panier est envoyé tel quel, le serveur revérifie tout — voir api/create-checkout-session.js)
+
+  // Construit une chaîne AAAA-MM-JJ à partir des composants LOCAUX de la date
+  // (surtout pas toISOString(), qui convertit en UTC et peut faire glisser
+  // la date d'un jour selon l'heure et le fuseau horaire du visiteur).
+  function toLocalDateString(d) {
+    const pad = n => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  }
+
   document.getElementById("cta").addEventListener("click", async () => {
     const cta = document.getElementById("cta");
     const errorBox = document.getElementById("cta-error");
@@ -520,7 +529,7 @@
     const payload = {
       items,
       epicerieId: selectedEpicerie.id,
-      pickupDate: selectedDate.toISOString().slice(0, 10), // YYYY-MM-DD
+      pickupDate: toLocalDateString(selectedDate), // YYYY-MM-DD, en heure locale
       successUrl: window.location.origin + window.location.pathname + "?statut=paye",
       cancelUrl: window.location.href,
     };
