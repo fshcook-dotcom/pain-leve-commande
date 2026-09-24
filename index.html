@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Pain Levé — Commander</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --flour:#F7F2E9;
+    --crumb:#EFE6D3;
+    --crust:#3E2A1B;
+    --crust-soft:#6B4E36;
+    --wheat:#B8892B;
+    --wheat-deep:#8F6A20;
+    --ink:#2B2420;
+    --line:#DED0B4;
+    --ok:#5C6B4C;
+    --err:#9B4034;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--flour);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:520px;
+    margin:0 auto;
+    padding:36px 22px 80px;
+  }
+  header{
+    margin-bottom:34px;
+  }
+  .word{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:2.1rem;
+    letter-spacing:0.01em;
+    color:var(--crust);
+    margin:0;
+    line-height:1.05;
+  }
+  .tag{
+    font-size:0.92rem;
+    color:var(--crust-soft);
+    margin:8px 0 0;
+    font-style:italic;
+    font-family:'Fraunces', serif;
+  }
+  .rule{
+    height:1px;
+    background:var(--line);
+    border:none;
+    margin:26px 0;
+  }
+  .step-label{
+    font-family:'Fraunces', serif;
+    font-size:1.2rem;
+    font-weight:500;
+    color:var(--crust);
+    margin:0 0 4px;
+  }
+  .step-sub{
+    font-size:0.86rem;
+    color:var(--crust-soft);
+    margin:0 0 16px;
+  }
+  .option-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .option{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    padding:13px 16px;
+    border:1px solid var(--line);
+    background:transparent;
+    border-radius:2px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:0.96rem;
+    color:var(--ink);
+    text-align:left;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .option:hover{ border-color:var(--wheat); }
+  .option.selected{
+    border-color:var(--crust);
+    background:var(--crumb);
+  }
+  .option .place{ font-weight:500; }
+  .option .commune{ color:var(--crust-soft); font-size:0.82rem; }
+  .day-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+  }
+  .day{
+    padding:11px 10px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    text-align:center;
+    font-size:0.9rem;
+    cursor:pointer;
+    background:transparent;
+    font-family:inherit;
+    color:var(--ink);
+    text-transform:capitalize;
+  }
+  .day:hover{ border-color:var(--wheat); }
+  .day.selected{
+    border-color:var(--crust);
+    background:var(--crumb);
+    font-weight:600;
+  }
+  .muted-note{
+    font-size:0.82rem;
+    color:var(--crust-soft);
+    margin-top:10px;
+  }
+  .category-heading{
+    font-family:'Fraunces', serif;
+    font-size:0.82rem;
+    font-style:italic;
+    color:var(--wheat-deep);
+    margin:18px 0 2px;
+  }
+  .category-heading:first-child{ margin-top:0; }
+  .product-note{
+    font-size:0.82rem;
+    color:var(--crust-soft);
+    background:var(--crumb);
+    border-radius:2px;
+    padding:9px 12px;
+    margin:0 0 14px;
+  }
+  .product-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .product-row:last-child{ border-bottom:none; }
+  .pname{ font-weight:500; font-size:0.98rem; }
+  .pprice{ color:var(--crust-soft); font-size:0.82rem; margin-top:2px; }
+  .stepper{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .stepper button{
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    border:1px solid var(--crust);
+    background:var(--flour);
+    color:var(--crust);
+    font-size:1.05rem;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .stepper button:active{ background:var(--crumb); }
+  .stepper span{
+    min-width:14px;
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+    font-weight:600;
+  }
+  .recap{
+    background:var(--crumb);
+    border-radius:2px;
+    padding:18px 18px 16px;
+    margin-top:8px;
+  }
+  .recap-line{
+    display:flex;
+    justify-content:space-between;
+    font-size:0.88rem;
+    padding:5px 0;
+    color:var(--crust-soft);
+  }
+  .recap-line.empty{ font-style:italic; }
+  .recap-total{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-top:10px;
+    padding-top:12px;
+    border-top:1px solid var(--line);
+  }
+  .recap-total .label{ font-size:0.92rem; color:var(--crust-soft); }
+  .recap-total .amount{
+    font-family:'Fraunces', serif;
+    font-size:1.5rem;
+    font-weight:600;
+    color:var(--crust);
+  }
+  .cta{
+    width:100%;
+    margin-top:22px;
+    padding:16px;
+    border:none;
+    border-radius:2px;
+    background:var(--crust);
+    color:var(--flour);
+    font-family:'Fraunces', serif;
+    font-size:1.05rem;
+    font-weight:500;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .cta:disabled{
+    background:#B7A88E;
+    cursor:not-allowed;
+  }
+  .cta:not(:disabled):hover{ background:var(--wheat-deep); }
+  .cta-note{
+    font-size:0.78rem;
+    color:var(--crust-soft);
+    text-align:center;
+    margin-top:10px;
+  }
+  .cta-error{
+    font-size:0.85rem;
+    color:var(--err);
+    text-align:center;
+    margin-top:10px;
+    display:none;
+  }
+  .about{
+    margin-top:52px;
+    padding-top:28px;
+    border-top:1px solid var(--line);
+  }
+  .about p{
+    font-size:0.9rem;
+    line-height:1.65;
+    color:var(--crust-soft);
+    margin:0 0 12px;
+  }
+  .about .about-title{
+    font-family:'Fraunces', serif;
+    font-size:1.05rem;
+    color:var(--crust);
+    margin:0 0 12px;
+  }
+  footer{
+    margin-top:38px;
+    text-align:center;
+    font-size:0.8rem;
+    color:var(--crust-soft);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="word">Le Pain Levé</p>
+    <p class="tag">De la farine, de l'eau, du temps</p>
+  </header>
+
+  <section>
+    <p class="step-label">1. Où récupérez-vous votre commande ?</p>
+    <div class="option-list" id="epicerie-list"></div>
+  </section>
+
+  <hr class="rule">
+
+  <section id="day-section" style="display:none;">
+    <p class="step-label">2. Quel jour ?</p>
+    <p class="step-sub" id="day-sub"></p>
+    <div class="day-grid" id="day-grid"></div>
+  </section>
+
+  <hr class="rule" id="rule-2" style="display:none;">
+
+  <section id="product-section" style="display:none;">
+    <p class="step-label">3. Vos pains</p>
+    <p class="step-sub">Composez librement votre commande</p>
+    <p class="product-note" id="product-note" style="display:none;"></p>
+    <div id="product-list"></div>
+  </section>
+
+  <div class="recap" id="recap" style="display:none;"></div>
+
+  <button class="cta" id="cta" disabled>Choisissez vos pains</button>
+  <p class="cta-error" id="cta-error"></p>
+  <p class="cta-note">Paiement sécurisé par carte bancaire, via Stripe. Le point de retrait et le jour choisis sont transmis avec votre paiement.</p>
+
+  <div class="about">
+    <p class="about-title">De la farine, de l'eau, du temps</p>
+    <p>Pétri lentement afin de préserver au mieux les nutriments présents dans la farine, ce pain renoue avec la tradition des panifications sans ajout de levure : 100% au levain naturel et aux farines bio de blés anciens majoritairement (85%) locales.</p>
+    <p>Les blés anciens sont riches en fer, en zinc, en magnésium et sont facilement assimilables par l'organisme. Ils favorisent la biodiversité. La fermentation longue (jusqu'à 16 heures) développe les arômes subtils du pain, améliore la digestibilité ainsi que sa conservation (4 à 6 jours dans un linge).</p>
+    <p>Ce pain vivant, sain et nourrissant est un retour au pain d'antan et au savoir-faire des anciens.</p>
+    <p>Vous connaissez quelqu'un qui cherche du bon pain près de chez lui ? Ce lien fonctionne pour tout le monde — n'hésitez pas à le partager.</p>
+  </div>
+
+  <footer>Le Pain Levé — Rouen · @lepainleve</footer>
+</div>
+
+<script>
+  // ---- Configuration ----
+  // Cette liste doit rester identique à celle du fichier api/create-checkout-session.js
+  // (le serveur recalcule les prix lui-même à partir des id — il ne fait jamais confiance
+  // aux prix envoyés par le navigateur).
+  const EPICERIES = [
+    { id: "fanny",     place: "Fanny pâtisserie",       commune: "7 place du 19 avril 1944, Rouen", days: [3,4,5,6] },
+    { id: "massenzio", place: "Massenzio",              commune: "20 place Saint Amand, Rouen",      days: [3,4,5,6] },
+    { id: "repere",    place: "Le repère des vignerons", commune: "154 rue Saint Hilaire, Rouen",     days: [3,4,5,6] },
+  ];
+  const DAY_NAMES = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+
+  // days: liste de jours (0=dim...6=sam) où le produit est fabriqué ; absent = tous les jours d'ouverture du point de retrait
+  const PRODUCTS = [
+    { id: "campagne700",  name: "Campagne 700 g",       category: "Pains 700 g", price: 7.5 },
+    { id: "graines700",   name: "Graines 700 g",        category: "Pains 700 g", price: 7.5 },
+    { id: "noix700",      name: "Noix 700 g",           category: "Pains 700 g", price: 7.5 },
+    { id: "complet700",   name: "Complet 700 g",        category: "Pains 700 g", price: 7.5 },
+    { id: "raisins700",   name: "Raisins 700 g",        category: "Pains 700 g", price: 7.5 },
+    { id: "epeautre500",  name: "Grand épeautre 500 g", category: "Pains moulés 500 g", price: 7, days: [3,4,5,6] },
+    { id: "nordique500",  name: "Nordique 500 g",       category: "Pains moulés 500 g", price: 7, days: [3,5] },
+    { id: "campagne2kg",  name: "Campagne 2 kg",        category: "Grands formats", price: 21.4 },
+    { id: "campagne3kg",  name: "Campagne 3 kg",        category: "Grands formats", price: 32 },
+    { id: "brioche300",   name: "Brioche 300 g",        category: "Viennoiserie", price: 7, days: [5] },
+  ];
+  const LEAD_DAYS = 2;
+
+  // ---- State ----
+  let selectedEpicerie = null;
+  let selectedDate = null; // Date object
+  let qty = {}; PRODUCTS.forEach(p => qty[p.id] = 0);
+
+  // ---- Render: épiceries ----
+  const epicerieList = document.getElementById("epicerie-list");
+  EPICERIES.forEach(ep => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.innerHTML = `<span class="place">${ep.place}</span><span class="commune">${ep.commune}</span>`;
+    btn.addEventListener("click", () => selectEpicerie(ep, btn));
+    epicerieList.appendChild(btn);
+  });
+
+  function selectEpicerie(ep, btn){
+    selectedEpicerie = ep;
+    selectedDate = null;
+    [...epicerieList.children].forEach(c => c.classList.remove("selected"));
+    btn.classList.add("selected");
+    renderDays(ep);
+    document.getElementById("day-section").style.display = "block";
+    document.getElementById("rule-2").style.display = "none";
+    document.getElementById("product-section").style.display = "none";
+    updateRecap();
+  }
+
+  function nextDatesForWeekday(weekday, count){
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const earliest = new Date(today);
+    earliest.setDate(earliest.getDate() + LEAD_DAYS);
+    const dates = [];
+    let d = new Date(earliest);
+    while(dates.length < count){
+      if(d.getDay() === weekday) dates.push(new Date(d));
+      d.setDate(d.getDate() + 1);
+    }
+    return dates;
+  }
+
+  function renderDays(ep){
+    const grid = document.getElementById("day-grid");
+    grid.innerHTML = "";
+    let allDates = [];
+    ep.days.forEach(wd => { allDates = allDates.concat(nextDatesForWeekday(wd, 1)); });
+    allDates.sort((a,b) => a - b);
+    allDates.forEach(date => {
+      const btn = document.createElement("button");
+      btn.className = "day";
+      btn.textContent = date.toLocaleDateString("fr-FR", { weekday:"short", day:"numeric", month:"short" });
+      btn.addEventListener("click", () => {
+        selectedDate = date;
+        [...grid.children].forEach(c => c.classList.remove("selected"));
+        btn.classList.add("selected");
+        document.getElementById("rule-2").style.display = "block";
+        document.getElementById("product-section").style.display = "block";
+        renderProducts(date);
+        updateRecap();
+      });
+      grid.appendChild(btn);
+    });
+    document.getElementById("day-sub").textContent =
+      `Commande à passer au moins ${LEAD_DAYS} jours avant le retrait, chez ${ep.place}.`;
+  }
+
+  function availableOn(product, date){
+    if(!product.days) return true;
+    return product.days.includes(date.getDay());
+  }
+
+  // ---- Render: produits (dépend du jour choisi : certains pains ne sont fabriqués que certains jours) ----
+  const productList = document.getElementById("product-list");
+  function renderProducts(date){
+    productList.innerHTML = "";
+    // les pains devenus indisponibles pour ce jour ne doivent pas rester dans le panier
+    PRODUCTS.forEach(p => { if(!availableOn(p, date)) qty[p.id] = 0; });
+
+    let currentCategory = null;
+    PRODUCTS.forEach(p => {
+      if(!availableOn(p, date)) return;
+      if(p.category !== currentCategory){
+        currentCategory = p.category;
+        const heading = document.createElement("div");
+        heading.className = "category-heading";
+        heading.textContent = currentCategory;
+        productList.appendChild(heading);
+      }
+      const row = document.createElement("div");
+      row.className = "product-row";
+      row.innerHTML = `
+        <div>
+          <div class="pname">${p.name}</div>
+          <div class="pprice">${p.price.toFixed(2)} €</div>
+        </div>
+        <div class="stepper">
+          <button aria-label="Retirer un ${p.name}" data-act="dec">–</button>
+          <span id="qty-${p.id}">${qty[p.id]}</span>
+          <button aria-label="Ajouter un ${p.name}" data-act="inc">+</button>
+        </div>
+      `;
+      row.querySelector('[data-act="inc"]').addEventListener("click", () => changeQty(p.id, 1));
+      row.querySelector('[data-act="dec"]').addEventListener("click", () => changeQty(p.id, -1));
+      productList.appendChild(row);
+    });
+
+    const skipped = PRODUCTS.some(p => p.days && !availableOn(p, date));
+    const note = document.getElementById("product-note");
+    if(skipped){
+      note.style.display = "block";
+      note.textContent = "Certains pains (fabriqués un jour précis) ne sont pas proposés pour cette date de retrait.";
+    } else {
+      note.style.display = "none";
+    }
+  }
+
+  function changeQty(id, delta){
+    qty[id] = Math.max(0, qty[id] + delta);
+    document.getElementById(`qty-${id}`).textContent = qty[id];
+    updateRecap();
+  }
+
+  // ---- Recap & CTA ----
+  function updateRecap(){
+    const recap = document.getElementById("recap");
+    const cta = document.getElementById("cta");
+    const items = PRODUCTS.filter(p => qty[p.id] > 0);
+    const total = items.reduce((sum, p) => sum + p.price * qty[p.id], 0);
+
+    if(!selectedEpicerie){
+      recap.style.display = "none";
+      cta.disabled = true;
+      cta.textContent = "Choisissez un point de retrait";
+      return;
+    }
+    if(!selectedDate){
+      recap.style.display = "none";
+      cta.disabled = true;
+      cta.textContent = "Choisissez un jour de retrait";
+      return;
+    }
+
+    recap.style.display = "block";
+    let html = `<div class="recap-line"><span>${selectedEpicerie.place}</span><span>${selectedDate.toLocaleDateString("fr-FR",{weekday:"long", day:"numeric", month:"long"})}</span></div>`;
+    if(items.length === 0){
+      html += `<div class="recap-line empty"><span>Aucun pain sélectionné pour l'instant</span></div>`;
+    } else {
+      items.forEach(p => {
+        html += `<div class="recap-line"><span>${qty[p.id]} × ${p.name}</span><span>${(p.price*qty[p.id]).toFixed(2)} €</span></div>`;
+      });
+    }
+    html += `<div class="recap-total"><span class="label">Total</span><span class="amount">${total.toFixed(2)} €</span></div>`;
+    recap.innerHTML = html;
+
+    if(items.length === 0){
+      cta.disabled = true;
+      cta.textContent = "Choisissez vos pains";
+    } else {
+      cta.disabled = false;
+      cta.textContent = `Commander et payer — ${total.toFixed(2)} €`;
+    }
+  }
+
+  // ---- Paiement : appel à la fonction serveur qui crée la session Stripe ----
+  // (le panier est envoyé tel quel, le serveur revérifie tout — voir api/create-checkout-session.js)
+  document.getElementById("cta").addEventListener("click", async () => {
+    const cta = document.getElementById("cta");
+    const errorBox = document.getElementById("cta-error");
+    if(cta.disabled) return;
+
+    errorBox.style.display = "none";
+    const originalLabel = cta.textContent;
+    cta.disabled = true;
+    cta.textContent = "Préparation du paiement…";
+
+    const items = PRODUCTS
+      .filter(p => qty[p.id] > 0)
+      .map(p => ({ id: p.id, quantity: qty[p.id] }));
+
+    const payload = {
+      items,
+      epicerieId: selectedEpicerie.id,
+      pickupDate: selectedDate.toISOString().slice(0, 10), // YYYY-MM-DD
+      successUrl: window.location.origin + window.location.pathname + "?statut=paye",
+      cancelUrl: window.location.href,
+    };
+
+    try {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if(!res.ok || !data.url){
+        throw new Error(data.error || "Réponse inattendue du serveur de paiement.");
+      }
+      window.location.href = data.url; // redirection vers Stripe, panier déjà rempli
+    } catch (err) {
+      errorBox.textContent = "Impossible de préparer le paiement pour l'instant. Réessayez dans un instant, ou contactez-nous si ça persiste.";
+      errorBox.style.display = "block";
+      cta.disabled = false;
+      cta.textContent = originalLabel;
+    }
+  });
+
+  // ---- Petit message de confirmation si on revient du paiement Stripe ----
+  if (new URLSearchParams(window.location.search).get("statut") === "paye") {
+    const banner = document.createElement("div");
+    banner.style.cssText = "background:#5C6B4C;color:#F7F2E9;padding:14px 18px;border-radius:2px;margin-bottom:24px;font-size:0.92rem;";
+    banner.textContent = "Merci ! Votre commande est confirmée, vous recevrez un reçu par email.";
+    document.querySelector(".wrap").insertBefore(banner, document.querySelector(".wrap").firstChild);
+  }
+</script>
+</body>
+</html>
