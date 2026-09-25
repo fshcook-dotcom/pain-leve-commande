@@ -51,9 +51,16 @@ const handler = async (req, res) => {
       const paymentIntentId = session.payment_intent;
 
       if (email && paymentIntentId) {
-        await stripe.paymentIntents.update(paymentIntentId, {
-          receipt_email: email,
-        });
+        // Sécurité anti-doublon : si un reçu a déjà été demandé pour ce
+        // paiement (par exemple si cette fonction est déclenchée deux fois
+        // pour le même événement), on ne redemande pas l'envoi une seconde
+        // fois — sinon le client reçoit le même reçu deux fois.
+        const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+        if (!paymentIntent.receipt_email) {
+          await stripe.paymentIntents.update(paymentIntentId, {
+            receipt_email: email,
+          });
+        }
       }
     }
     res.status(200).json({ received: true });
