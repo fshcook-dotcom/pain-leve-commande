@@ -9,15 +9,6 @@
 
 const Stripe = require("stripe");
 
-// Empêche Vercel d'interpréter le corps de la requête avant nous : Stripe a
-// besoin du corps brut, tel quel, pour vérifier que la requête vient bien de
-// lui (signature).
-module.exports.config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 function readRawBody(req) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -27,7 +18,7 @@ function readRawBody(req) {
   });
 }
 
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).end();
     return;
@@ -73,3 +64,15 @@ module.exports = async (req, res) => {
     res.status(200).json({ received: true, warning: "traitement partiel" });
   }
 };
+
+// Empêche Vercel d'interpréter le corps de la requête avant nous : Stripe a
+// besoin du corps brut, tel quel, pour vérifier que la requête vient bien de
+// lui (signature). Cette ligne doit venir APRÈS la définition de la
+// fonction, sinon elle est perdue.
+handler.config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+module.exports = handler;
