@@ -47,6 +47,7 @@ module.exports = async (req, res) => {
   try {
     const { items, epicerieId, pickupDate, successUrl, cancelUrl } = req.body || {};
 
+    // --- Validation de base ---
     if (!Array.isArray(items) || items.length === 0) {
       res.status(400).json({ error: "Panier vide." });
       return;
@@ -73,7 +74,9 @@ module.exports = async (req, res) => {
       return;
     }
 
+    // --- Construction des lignes, prix recalculés côté serveur uniquement ---
     const line_items = [];
+    const itemsSummary = [];
     for (const raw of items) {
       const product = PRODUCTS.find(p => p.id === raw?.id);
       if (!product) {
@@ -93,10 +96,11 @@ module.exports = async (req, res) => {
         price_data: {
           currency: "eur",
           product_data: { name: product.name },
-          unit_amount: Math.round(product.price * 100),
+          unit_amount: Math.round(product.price * 100), // prix en centimes, jamais celui du navigateur
         },
         quantity,
       });
+      itemsSummary.push(`${quantity}x ${product.name}`);
     }
 
     const dateLabel = pickup.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
@@ -110,7 +114,7 @@ module.exports = async (req, res) => {
         pickupDate,
       },
       payment_intent_data: {
-        description: `Le Pain Levé — retrait ${dateLabel} chez ${epicerie.place}`,
+        description: `Retrait ${dateLabel} chez ${epicerie.place} — ${itemsSummary.join(", ")}`,
       },
       success_url: successUrl,
       cancel_url: cancelUrl,
