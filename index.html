@@ -305,7 +305,7 @@
 
   <div class="recap" id="recap" style="display:none;"></div>
 
-  <button class="cta" id="cta" disabled>Choisissez vos pains</button>
+  <button class="cta" id="cta" disabled>Choisissez un point de retrait</button>
   <p class="cta-error" id="cta-error"></p>
   <p class="cta-note">Paiement sécurisé par carte bancaire, via Stripe. Le point de retrait et le jour choisis sont transmis avec votre paiement.</p>
 
@@ -361,6 +361,7 @@
     btn.addEventListener("click", () => selectEpicerie(ep, btn));
     epicerieList.appendChild(btn);
   });
+  updateRecap();
 
   function selectEpicerie(ep, btn){
     selectedEpicerie = ep;
