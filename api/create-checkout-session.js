@@ -26,7 +26,6 @@ const PRODUCTS = [
 const EPICERIES = [
   { id: "fanny",     place: "Fanny pâtisserie",        days: [3,4,5,6] },
   { id: "massenzio", place: "Massenzio",               days: [3,4,5,6] },
-  { id: "repere",    place: "Le repère des vignerons", days: [3,4,5,6] },
 ];
 
 const MAX_QTY_PER_PRODUCT = 20;
