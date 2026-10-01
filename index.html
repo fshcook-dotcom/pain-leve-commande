@@ -282,14 +282,14 @@
   </header>
 
   <section>
-    <p class="step-label">1. Où récupérez-vous votre commande ?</p>
+    <p class="step-label">1. Choisissez un point de retrait</p>
     <div class="option-list" id="epicerie-list"></div>
   </section>
 
   <hr class="rule">
 
   <section id="day-section" style="display:none;">
-    <p class="step-label">2. Quel jour ?</p>
+    <p class="step-label">2. Choisissez un jour de retrait</p>
     <p class="step-sub" id="day-sub"></p>
     <div class="day-grid" id="day-grid"></div>
   </section>
@@ -297,7 +297,7 @@
   <hr class="rule" id="rule-2" style="display:none;">
 
   <section id="product-section" style="display:none;">
-    <p class="step-label">3. Vos pains</p>
+    <p class="step-label">3. Choisissez vos pains</p>
     <p class="step-sub">Composez librement votre commande</p>
     <p class="product-note" id="product-note" style="display:none;"></p>
     <div id="product-list"></div>
@@ -305,7 +305,7 @@
 
   <div class="recap" id="recap" style="display:none;"></div>
 
-  <button class="cta" id="cta" disabled>Choisissez un point de retrait</button>
+  <button class="cta" id="cta" style="display:none;">Commander et payer</button>
   <p class="cta-error" id="cta-error"></p>
   <p class="cta-note">Paiement sécurisé par carte bancaire, via Stripe. Le point de retrait et le jour choisis sont transmis avec votre paiement.</p>
 
@@ -479,14 +479,12 @@
 
     if(!selectedEpicerie){
       recap.style.display = "none";
-      cta.disabled = true;
-      cta.textContent = "Choisissez un point de retrait";
+      cta.style.display = "none";
       return;
     }
     if(!selectedDate){
       recap.style.display = "none";
-      cta.disabled = true;
-      cta.textContent = "Choisissez un jour de retrait";
+      cta.style.display = "none";
       return;
     }
 
@@ -503,9 +501,9 @@
     recap.innerHTML = html;
 
     if(items.length === 0){
-      cta.disabled = true;
-      cta.textContent = "Choisissez vos pains";
+      cta.style.display = "none";
     } else {
+      cta.style.display = "block";
       cta.disabled = false;
       cta.textContent = `Commander et payer — ${total.toFixed(2)} €`;
     }
