@@ -1,8 +1,12 @@
 // Fonction serveur (Vercel) : écoute la confirmation de paiement envoyée par
-// Stripe (côté serveur, juste après que le client a payé) et demande
-// explicitement l'envoi du reçu par e-mail au client. On fait ça ici, en
-// code, car le réglage habituel "envoyer les reçus automatiquement" n'est
-// pas disponible sur ce compte Stripe.
+// Stripe (côté serveur, juste après que le client a payé).
+// Deux choses à chaque paiement réussi :
+//  1. Demande explicitement l'envoi du reçu par e-mail au client (le réglage
+//     habituel "envoyer les reçus automatiquement" n'est pas disponible sur
+//     ce compte Stripe).
+//  2. Si la commande était cochée "récurrente", transmet téléphone + panier
+//     au Google Sheet qui gère les relances SMS hebdomadaires — voir
+//     google-apps-script-recurrence.gs pour la suite de la chaîne.
 //
 // Cette fonction doit être déclarée comme point de terminaison (« webhook »)
 // sur le dashboard Stripe — voir le README pour la marche à suivre.
@@ -60,6 +64,40 @@ const handler = async (req, res) => {
           await stripe.paymentIntents.update(paymentIntentId, {
             receipt_email: email,
           });
+        }
+      }
+
+      // ---- Commande récurrente : transmission au Google Sheet ----
+      const meta = session.metadata || {};
+      if (meta.recurring === "yes" && meta.recurringPhone) {
+        const sheetUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+        const sheetSecret = process.env.GOOGLE_SHEET_WEBHOOK_SECRET;
+        if (sheetUrl) {
+          try {
+            const sheetRes = await fetch(sheetUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                secret: sheetSecret || "",
+                phone: meta.recurringPhone,
+                epicerieId: meta.epicerieId,
+                itemsEncoded: meta.itemsEncoded,
+              }),
+            });
+            const sheetBody = await sheetRes.text();
+            // Log temporaire de diagnostic — à retirer une fois le système
+            // de récurrence validé en conditions réelles.
+            console.log(
+              "Réponse Google Sheet — statut:", sheetRes.status,
+              "url finale:", sheetRes.url,
+              "corps:", sheetBody.slice(0, 500)
+            );
+          } catch (err) {
+            // La commande est déjà payée : on ne fait surtout pas échouer le
+            // webhook pour ça. C'est juste la mémorisation "récurrente" qui
+            // rate — à surveiller si ça arrive souvent.
+            console.error("Erreur transmission vers le Google Sheet :", err);
+          }
         }
       }
     }
