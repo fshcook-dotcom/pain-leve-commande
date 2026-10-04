@@ -74,7 +74,7 @@ const handler = async (req, res) => {
         const sheetSecret = process.env.GOOGLE_SHEET_WEBHOOK_SECRET;
         if (sheetUrl) {
           try {
-            const sheetRes = await fetch(sheetUrl, {
+            await fetch(sheetUrl, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -84,14 +84,6 @@ const handler = async (req, res) => {
                 itemsEncoded: meta.itemsEncoded,
               }),
             });
-            const sheetBody = await sheetRes.text();
-            // Log temporaire de diagnostic — à retirer une fois le système
-            // de récurrence validé en conditions réelles.
-            console.log(
-              "Réponse Google Sheet — statut:", sheetRes.status,
-              "url finale:", sheetRes.url,
-              "corps:", sheetBody.slice(0, 500)
-            );
           } catch (err) {
             // La commande est déjà payée : on ne fait surtout pas échouer le
             // webhook pour ça. C'est juste la mémorisation "récurrente" qui
