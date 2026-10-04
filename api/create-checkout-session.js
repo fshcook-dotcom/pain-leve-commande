@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
   const stripe = Stripe(secretKey);
 
   try {
-    const { items, epicerieId, pickupDate, successUrl, cancelUrl } = req.body || {};
+    const { items, epicerieId, pickupDate, successUrl, cancelUrl, recurring, recurringPhone } = req.body || {};
 
     // --- Validation de base ---
     if (!Array.isArray(items) || items.length === 0) {
@@ -53,6 +53,10 @@ module.exports = async (req, res) => {
     }
     if (!successUrl || !cancelUrl) {
       res.status(400).json({ error: "URLs de redirection manquantes." });
+      return;
+    }
+    if (recurring && (!recurringPhone || String(recurringPhone).trim().length < 6)) {
+      res.status(400).json({ error: "Numéro de mobile manquant pour la commande récurrente." });
       return;
     }
 
@@ -104,16 +108,26 @@ module.exports = async (req, res) => {
 
     const dateLabel = pickup.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
 
+    // Encodage du panier au même format que le lien "recommander" du site
+    // (?ep=ID&items=id1:qte1,id2:qte2) — réutilisé par les relances SMS des
+    // commandes récurrentes pour reconstituer le panier habituel du client.
+    const itemsEncoded = items.map(raw => `${raw.id}:${raw.quantity}`).join(",");
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items,
       client_reference_id: `${epicerie.place} | ${pickupDate}`,
       metadata: {
         epicerie: epicerie.place,
+        epicerieId: epicerie.id,
         pickupDate,
+        itemsEncoded,
+        recurring: recurring ? "yes" : "no",
+        recurringPhone: recurring ? String(recurringPhone).trim() : "",
       },
       payment_intent_data: {
-        description: `Retrait ${dateLabel} chez ${epicerie.place} — ${itemsSummary.join(", ")}`,
+        description: `Retrait ${dateLabel} chez ${epicerie.place} — ${itemsSummary.join(", ")}`
+          + (recurring ? " [commande récurrente]" : ""),
       },
       success_url: successUrl,
       cancel_url: cancelUrl,
