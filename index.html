@@ -225,6 +225,37 @@
     font-weight:600;
     color:var(--crust);
   }
+  .recurring-box{
+    background:var(--crumb);
+    border-radius:2px;
+    padding:14px 18px;
+    margin-top:10px;
+  }
+  .recurring-toggle{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    font-size:0.9rem;
+    cursor:pointer;
+  }
+  .recurring-toggle input{ margin-top:3px; flex-shrink:0; }
+  .recurring-phone-input{
+    width:100%;
+    margin-top:10px;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    font-family:inherit;
+    font-size:0.92rem;
+    background:var(--flour);
+    color:var(--ink);
+  }
+  .recurring-hint{
+    font-size:0.8rem;
+    color:var(--crust-soft);
+    margin:8px 0 0;
+    line-height:1.4;
+  }
   .cta{
     width:100%;
     margin-top:22px;
@@ -313,6 +344,17 @@
   </section>
 
   <div class="recap" id="recap" style="display:none;"></div>
+
+  <div class="recurring-box" id="recurring-box" style="display:none;">
+    <label class="recurring-toggle">
+      <input type="checkbox" id="recurring-checkbox">
+      <span>Rendre cette commande récurrente chaque semaine</span>
+    </label>
+    <div id="recurring-phone-wrap" style="display:none;">
+      <input type="tel" id="recurring-phone" class="recurring-phone-input" placeholder="Votre numéro de mobile, pour la relance SMS" autocomplete="tel">
+      <p class="recurring-hint">Chaque semaine, un SMS vous proposera de recommander ce panier (modifiable). Vous validez et payez comme d'habitude — rien n'est jamais prélevé automatiquement. Sans confirmation avant la date limite, la récurrence est mise en pause (vous pourrez la reprendre à tout moment).</p>
+    </div>
+  </div>
 
   <button class="cta" id="cta" style="display:none;">Commander et payer</button>
   <p class="cta-error" id="cta-error"></p>
@@ -493,6 +535,15 @@
     updateRecap();
   }
 
+  // ---- Commande récurrente : case à cocher + téléphone ----
+  const recurringBox = document.getElementById("recurring-box");
+  const recurringCheckbox = document.getElementById("recurring-checkbox");
+  const recurringPhoneWrap = document.getElementById("recurring-phone-wrap");
+  const recurringPhoneInput = document.getElementById("recurring-phone");
+  recurringCheckbox.addEventListener("change", () => {
+    recurringPhoneWrap.style.display = recurringCheckbox.checked ? "block" : "none";
+  });
+
   // ---- Recap & CTA ----
   function updateRecap(){
     const recap = document.getElementById("recap");
@@ -503,11 +554,13 @@
     if(!selectedEpicerie){
       recap.style.display = "none";
       cta.style.display = "none";
+      recurringBox.style.display = "none";
       return;
     }
     if(!selectedDate){
       recap.style.display = "none";
       cta.style.display = "none";
+      recurringBox.style.display = "none";
       return;
     }
 
@@ -525,10 +578,12 @@
 
     if(items.length === 0){
       cta.style.display = "none";
+      recurringBox.style.display = "none";
     } else {
       cta.style.display = "block";
       cta.disabled = false;
       cta.textContent = `Commander et payer — ${total.toFixed(2)} €`;
+      recurringBox.style.display = "block";
     }
   }
 
@@ -549,6 +604,17 @@
     if(cta.disabled) return;
 
     errorBox.style.display = "none";
+
+    // la commande récurrente demande un numéro de mobile (pour la relance SMS)
+    const recurring = recurringCheckbox.checked;
+    const recurringPhone = recurringPhoneInput.value.trim();
+    if(recurring && recurringPhone.length < 6){
+      errorBox.textContent = "Merci d'indiquer votre numéro de mobile pour activer la commande récurrente.";
+      errorBox.style.display = "block";
+      recurringPhoneInput.focus();
+      return;
+    }
+
     const originalLabel = cta.textContent;
     cta.disabled = true;
     cta.textContent = "Préparation du paiement…";
@@ -563,6 +629,8 @@
       pickupDate: toLocalDateString(selectedDate), // YYYY-MM-DD, en heure locale
       successUrl: window.location.origin + window.location.pathname + "?statut=paye",
       cancelUrl: window.location.href,
+      recurring,
+      recurringPhone: recurring ? recurringPhone : "",
     };
 
     try {
@@ -575,6 +643,7 @@
       if(!res.ok || !data.url){
         throw new Error(data.error || "Réponse inattendue du serveur de paiement.");
       }
+      saveLastOrder(selectedEpicerie.id, items); // mémorise le panier pour une prochaine commande rapide
       window.location.href = data.url; // redirection vers Stripe, panier déjà rempli
     } catch (err) {
       errorBox.textContent = "Impossible de préparer le paiement pour l'instant. Réessayez dans un instant, ou contactez-nous si ça persiste.";
@@ -590,6 +659,122 @@
     banner.style.cssText = "background:#5C6B4C;color:#F7F2E9;padding:14px 18px;border-radius:2px;margin-bottom:24px;font-size:0.92rem;";
     banner.textContent = "Merci ! Votre commande est confirmée, vous recevrez un reçu par email.";
     document.querySelector(".wrap").insertBefore(banner, document.querySelector(".wrap").firstChild);
+  }
+
+  // ---- Commande récurrente : mémorisation + proposition de "recommander" ----
+  // Objectif : la même adresse (celle du QR code) sert à tout le monde. Après
+  // une commande, son panier est mémorisé dans le navigateur du client ; à sa
+  // prochaine visite sur CE MÊME appareil, on lui propose de recommander
+  // pareil en un clic — sans rien envoyer, sans rien débiter automatiquement.
+  const LAST_ORDER_KEY = "lepainleve_derniere_commande";
+
+  function saveLastOrder(epId, items){
+    try{
+      localStorage.setItem(LAST_ORDER_KEY, JSON.stringify({ ep: epId, items, at: Date.now() }));
+    } catch(e) { /* localStorage indisponible (navigation privée...) : pas grave */ }
+  }
+
+  function readLastOrder(){
+    try{
+      const raw = localStorage.getItem(LAST_ORDER_KEY);
+      if(!raw) return null;
+      const data = JSON.parse(raw);
+      if(!data || !data.ep || !Array.isArray(data.items)) return null;
+      return data;
+    } catch(e) { return null; }
+  }
+
+  // Applique un panier (épicerie + liste {id, quantity}) : sélectionne
+  // l'épicerie, la date la plus proche, puis reporte les quantités —
+  // utilisé à la fois par le lien manuel ?ep=...&items=... et par "recommander".
+  function applyCart(epId, items){
+    const epIndex = EPICERIES.findIndex(e => e.id === epId);
+    const ep = EPICERIES[epIndex];
+    const epBtn = epicerieList.children[epIndex];
+    if(!ep || !epBtn) return false;
+
+    selectEpicerie(ep, epBtn);
+
+    const grid = document.getElementById("day-grid");
+    const firstDayBtn = grid.querySelector(".day");
+    if(!firstDayBtn) return false;
+    firstDayBtn.click();
+
+    // seulement les pains encore disponibles pour cette date (un pain du
+    // jour peut avoir changé depuis la dernière commande)
+    items.forEach(({id, quantity}) => {
+      const qtyEl = document.getElementById(`qty-${id}`);
+      if(qty.hasOwnProperty(id) && qtyEl){
+        qty[id] = Math.max(0, parseInt(quantity, 10) || 0);
+        qtyEl.textContent = qty[id];
+      }
+    });
+    updateRecap();
+    return true;
+  }
+
+  function showBanner(text){
+    const banner = document.createElement("div");
+    banner.style.cssText = "background:var(--crumb);border:1px solid var(--line);color:var(--ink);padding:14px 18px;border-radius:2px;margin-bottom:24px;font-size:0.92rem;";
+    banner.textContent = text;
+    document.querySelector(".wrap").insertBefore(banner, document.querySelector(".wrap").firstChild);
+  }
+
+  // Cas 1 : lien manuel index.html?ep=ID_EPICERIE&items=id1:qte1,id2:qte2,...
+  // (utile si vous voulez renvoyer le lien vous-même par SMS/WhatsApp)
+  function prefillFromLinkParams(){
+    const params = new URLSearchParams(window.location.search);
+    const epId = params.get("ep");
+    const itemsParam = params.get("items");
+    if(!epId || !itemsParam) return false;
+
+    const items = itemsParam.split(",").map(pair => {
+      const [id, q] = pair.split(":");
+      return { id, quantity: q };
+    });
+    if(!applyCart(epId, items)) return false;
+    showBanner("Votre panier habituel est prêt — vérifiez, ajustez si besoin, choisissez votre date et validez.");
+    return true;
+  }
+
+  // Cas 2 : visite normale (même lien pour tout le monde, celui du QR code) —
+  // si ce navigateur a déjà passé une commande, on propose de recommander.
+  function offerRecurringReorder(){
+    const last = readLastOrder();
+    if(!last) return;
+
+    const ep = EPICERIES.find(e => e.id === last.ep);
+    if(!ep) return;
+    const summary = last.items
+      .map(({id, quantity}) => {
+        const product = PRODUCTS.find(p => p.id === id);
+        return product ? `${quantity} × ${product.name}` : null;
+      })
+      .filter(Boolean)
+      .join(", ");
+    if(!summary) return;
+
+    const box = document.createElement("div");
+    box.style.cssText = "background:var(--crumb);border:1px solid var(--line);color:var(--ink);padding:16px 18px;border-radius:2px;margin-bottom:24px;font-size:0.92rem;";
+    box.innerHTML = `
+      <div style="margin-bottom:10px;">Votre dernière commande chez <strong>${ep.place}</strong> : ${summary}.</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="reorder-yes" type="button" style="padding:9px 14px; border:1px solid var(--crust); background:var(--crust); color:var(--flour); border-radius:2px; font-family:inherit; font-size:0.88rem; cursor:pointer;">Recommander ce panier</button>
+        <button id="reorder-no" type="button" style="padding:9px 14px; border:1px solid var(--line); background:transparent; color:var(--crust-soft); border-radius:2px; font-family:inherit; font-size:0.88rem; cursor:pointer;">Non, nouvelle commande</button>
+      </div>
+    `;
+    document.querySelector(".wrap").insertBefore(box, document.querySelector(".wrap").firstChild);
+
+    box.querySelector("#reorder-yes").addEventListener("click", () => {
+      applyCart(last.ep, last.items);
+      box.remove();
+      showBanner("Panier repris à l'identique — vérifiez, ajustez si besoin, choisissez votre date et validez.");
+    });
+    box.querySelector("#reorder-no").addEventListener("click", () => box.remove());
+  }
+
+  if(!prefillFromLinkParams()){
+    offerRecurringReorder();
   }
 </script>
 </body>
