@@ -402,6 +402,16 @@
   let selectedDate = null; // Date object
   let qty = {}; PRODUCTS.forEach(p => qty[p.id] = 0);
 
+  // ---- Commande récurrente : case à cocher + téléphone ----
+  // (déclaré avant le premier appel à updateRecap() plus bas, qui en a besoin)
+  const recurringBox = document.getElementById("recurring-box");
+  const recurringCheckbox = document.getElementById("recurring-checkbox");
+  const recurringPhoneWrap = document.getElementById("recurring-phone-wrap");
+  const recurringPhoneInput = document.getElementById("recurring-phone");
+  recurringCheckbox.addEventListener("change", () => {
+    recurringPhoneWrap.style.display = recurringCheckbox.checked ? "block" : "none";
+  });
+
   // ---- Render: épiceries ----
   const epicerieList = document.getElementById("epicerie-list");
   EPICERIES.forEach(ep => {
@@ -534,15 +544,6 @@
     document.getElementById(`qty-${id}`).textContent = qty[id];
     updateRecap();
   }
-
-  // ---- Commande récurrente : case à cocher + téléphone ----
-  const recurringBox = document.getElementById("recurring-box");
-  const recurringCheckbox = document.getElementById("recurring-checkbox");
-  const recurringPhoneWrap = document.getElementById("recurring-phone-wrap");
-  const recurringPhoneInput = document.getElementById("recurring-phone");
-  recurringCheckbox.addEventListener("change", () => {
-    recurringPhoneWrap.style.display = recurringCheckbox.checked ? "block" : "none";
-  });
 
   // ---- Recap & CTA ----
   function updateRecap(){
