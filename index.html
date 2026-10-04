@@ -130,6 +130,15 @@
     background:var(--crumb);
     font-weight:600;
   }
+  .month-heading{
+    grid-column:1 / -1;
+    font-size:0.82rem;
+    font-weight:600;
+    color:var(--crust-soft);
+    text-transform:capitalize;
+    margin:10px 0 -2px;
+  }
+  .month-heading:first-child{ margin-top:0; }
   .muted-note{
     font-size:0.82rem;
     color:var(--crust-soft);
@@ -374,14 +383,12 @@
     updateRecap();
   }
 
-  function nextDatesForWeekday(weekday, count){
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const earliest = new Date(today);
-    earliest.setDate(earliest.getDate() + LEAD_DAYS);
+  const BOOKING_WINDOW_DAYS = 31; // les clients peuvent choisir une date sur un mois complet à l'avance
+
+  function datesForWeekdayInWindow(weekday, from, to){
     const dates = [];
-    let d = new Date(earliest);
-    while(dates.length < count){
+    let d = new Date(from);
+    while(d <= to){
       if(d.getDay() === weekday) dates.push(new Date(d));
       d.setDate(d.getDate() + 1);
     }
@@ -391,16 +398,33 @@
   function renderDays(ep){
     const grid = document.getElementById("day-grid");
     grid.innerHTML = "";
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const earliest = new Date(today);
+    earliest.setDate(earliest.getDate() + LEAD_DAYS);
+    const horizon = new Date(earliest);
+    horizon.setDate(horizon.getDate() + BOOKING_WINDOW_DAYS);
+
     let allDates = [];
-    ep.days.forEach(wd => { allDates = allDates.concat(nextDatesForWeekday(wd, 1)); });
+    ep.days.forEach(wd => { allDates = allDates.concat(datesForWeekdayInWindow(wd, earliest, horizon)); });
     allDates.sort((a,b) => a - b);
+
+    let currentMonth = null;
     allDates.forEach(date => {
+      const monthLabel = date.toLocaleDateString("fr-FR", { month:"long", year:"numeric" });
+      if(monthLabel !== currentMonth){
+        currentMonth = monthLabel;
+        const heading = document.createElement("div");
+        heading.className = "month-heading";
+        heading.textContent = monthLabel;
+        grid.appendChild(heading);
+      }
       const btn = document.createElement("button");
       btn.className = "day";
       btn.textContent = date.toLocaleDateString("fr-FR", { weekday:"short", day:"numeric", month:"short" });
       btn.addEventListener("click", () => {
         selectedDate = date;
-        [...grid.children].forEach(c => c.classList.remove("selected"));
+        [...grid.querySelectorAll(".day")].forEach(c => c.classList.remove("selected"));
         btn.classList.add("selected");
         document.getElementById("rule-2").style.display = "block";
         document.getElementById("product-section").style.display = "block";
@@ -410,7 +434,7 @@
       grid.appendChild(btn);
     });
     document.getElementById("day-sub").textContent =
-      `Commande à passer au moins ${LEAD_DAYS} jours avant le retrait, chez ${ep.place}.`;
+      `Commande à passer au moins ${LEAD_DAYS} jours avant le retrait, chez ${ep.place}. Vous pouvez choisir une date jusqu'à un mois à l'avance.`;
   }
 
   function availableOn(product, date){
