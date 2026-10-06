@@ -1,0 +1,12 @@
+{
+  "name": "pain-leve-commande",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    // la page, le logo et les mentions légales : dossier "public"
+    "directory": "./public",
+    "binding": "ASSETS",
+    // seules les adresses /api/* passent par le code ; le reste est servi tel quel
+    "run_worker_first": ["/api/*"]
+  }
+}
