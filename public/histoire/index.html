@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Pain Levé — Pain au levain de blés anciens, Rouen</title>
+<meta name="description" content="Le Pain Levé : pain 100 % levain naturel, farines bio de blés anciens, fermentation longue. Points de vente et retrait à Rouen. Commande en ligne.">
+<meta property="og:title" content="Le Pain Levé — Pain au levain de blés anciens">
+<meta property="og:description" content="100 % levain naturel, farines bio de blés anciens, fermentation longue. Commandez en ligne, retirez près de chez vous à Rouen.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lepainleve.com/histoire/">
+<meta property="og:image" content="https://lepainleve.com/assets/logo-presentation.png">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Karla:wght@300;400;500&display=swap">
+<style>
+  :root {
+    --ivoire:   #F5F0E3;
+    --ivoire-dk:#EDE6CF;
+    --or:       #C49520;
+    --or-lt:    #D4AB3A;
+    --or-dk:    #8B6A14;
+    --taupe:    #5A5147;
+    --taupe-lt: #8A7D6E;
+    --brun:     #3A2E1A;
+    --border:   #D9CDA8;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ivoire:   #1E1A11; --ivoire-dk:#161208;
+      --taupe:    #C8BAA0; --taupe-lt: #8A7D6E;
+      --brun:     #EDE0C4; --border:   #352E1A;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ivoire:   #1E1A11; --ivoire-dk:#161208;
+    --taupe:    #C8BAA0; --taupe-lt: #8A7D6E;
+    --brun:     #EDE0C4; --border:   #352E1A;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+  body {
+    font-family: 'Karla', system-ui, sans-serif;
+    font-weight: 400;
+    background: var(--ivoire);
+    color: var(--taupe);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--ivoire);
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: center;
+    padding: .9rem 2rem;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; padding: 0; flex-wrap: wrap; justify-content: center; }
+  .nav-links a { font-size: .72rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: var(--taupe); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--or); }
+
+  /* Ajout lien nav manifeste */
+
+  /* HERO */
+  .hero {
+    background: var(--ivoire);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 4rem 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .hero-logo { width: min(240px, 55vw); height: auto; margin-bottom: 2.5rem; display: block; }
+  .hero-claim {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 400; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--or-dk); margin-bottom: 1.2rem;
+  }
+  .hero-divider {
+    display: flex; align-items: center; gap: 1rem;
+    color: var(--or); font-size: .8rem; letter-spacing: .1em; margin-bottom: 1.5rem;
+  }
+  .hero-divider::before, .hero-divider::after {
+    content: ''; display: block; height: 1px; width: 60px; background: var(--or); opacity: .5;
+  }
+  .hero-intro {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem); font-style: italic;
+    color: var(--taupe); max-width: 640px; line-height: 1.65; margin-bottom: 2rem;
+  }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+  .tag { border: 1px solid var(--border); color: var(--taupe-lt); padding: .32rem .9rem; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+
+  /* SECTIONS */
+  section { padding: 4.5rem 2rem; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .section-label {
+    font-size: .68rem; letter-spacing: .22em; text-transform: uppercase; color: var(--or);
+    margin-bottom: .8rem; display: flex; align-items: center; gap: .7rem;
+  }
+  .section-label::after { content: ''; display: block; height: 1px; width: 32px; background: var(--or); opacity: .5; }
+  h2 {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(1.8rem, 4.5vw, 2.8rem); font-weight: 600;
+    line-height: 1.15; color: var(--brun); margin-bottom: 1.5rem;
+  }
+  .lead {
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: 1.22rem; font-style: italic;
+    color: var(--taupe-lt); max-width: 680px; margin-bottom: 2rem; line-height: 1.6;
+  }
+  p { color: var(--taupe); max-width: 680px; }
+
+  /* MANIFESTE */
+  #manifeste {
+    border-bottom: 1px solid var(--border);
+    background: var(--brun);
+  }
+  #manifeste .section-label { color: var(--or-lt); }
+  #manifeste .section-label::after { background: var(--or-lt); }
+  #manifeste h2 { color: var(--ivoire); max-width: 700px; }
+  .manifeste-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    margin-top: 2rem;
+  }
+  @media (max-width: 640px) { .manifeste-body { grid-template-columns: 1fr; gap: 2rem; } }
+  .manifeste-body p { color: rgba(245,240,227,.7); max-width: none; line-height: 1.75; }
+  .manifeste-body p + p { margin-top: 1rem; }
+  .manifeste-quote {
+    grid-column: 1 / -1;
+    margin-top: 2rem;
+    padding: 2rem 2.5rem;
+    border: 1px solid rgba(196,149,32,.3);
+    border-left: 4px solid var(--or-lt);
+    font-family: 'Cormorant', Georgia, serif;
+    font-size: clamp(1.2rem, 2.8vw, 1.6rem);
+    font-style: italic;
+    color: var(--ivoire);
+    line-height: 1.55;
+  }
+
+  /* NOTRE PAIN */
+  #pain { border-bottom: 1px solid var(--border); }
+  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: start; margin-top: 2.5rem; }
+  @media (max-width: 640px) { .pain-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+  /* BLÉS ANCIENS — section détaillée */
+  #bles { background: var(--ivoire-dk); border-bottom: 1px solid var(--border); }
+  .bles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+  .bles-card {
+    background: var(--ivoire); border: 1px solid var(--border);
+    border-top: 3px solid var(--or); padding: 2rem 1.8rem;
+  }
+  .bles-card-icon { font-size: 1.5rem; margin-bottom: .8rem; }
+  .bles-card h3 {
+    font-family: 'Cormorant', Georgia, serif; font-size: 1.15rem; font-weight: 600;
+    color: var(--brun); margin-bottom: .7rem;
+  }
+  .bles-card p { font-size: .92rem; line-height: 1.7; max-width: none; }
+  .bles-note {
+    margin-top: 2.5rem; padding: 1.5rem 2rem;
+    border-left: 3px solid var(--or); background: var(--ivoire);
+    font-family: 'Cormorant', Georgia, serif; font-size: 1.1rem; font-style: italic;
+    color: var(--taupe); line-height: 1.6; max-width: 700px;
+  }
+
+  /* GAMME */
+  #gamme { border-bottom: 1px solid var(--border); }
+  .gamme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+  .gamme-card { background: var(--ivoire-dk); border: 1px solid var(--border); border-top: 2px solid var(--or); padding: 1.8rem 1.6rem; }
+  .gamme-card h3 { font-family: 'Cormorant', Georgia, serif; font-size: 1.2rem; font-weight: 600; color: var(--brun); margin-bottom: .8rem; }
+  .gamme-card ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+  .gamme-card li { font-size: .9rem; color: var(--taupe); padding-left: 1rem; position: relative; }
+  .gamme-card li::before { content: '·'; position: absolute; left: 0; color: var(--or); font-weight: 700; }
+
+  /* POINTS DE VENTE */
+  #vente { background: var(--ivoire-dk); border-bottom: 1px solid var(--border); }
+  .vente-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin-top: 2.5rem; }
+  .vente-card { background: var(--ivoire); border: 1px solid var(--border); padding: 1.6rem; display: flex; gap: 1rem; align-items: flex-start; }
+  .vente-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--or); margin-top: .55rem; flex-shrink: 0; }
+  .vente-card h4 { font-family: 'Cormorant', Georgia, serif; font-size: 1.05rem; font-weight: 600; color: var(--brun); margin-bottom: .3rem; }
+  .vente-card p { font-size: .88rem; color: var(--taupe-lt); line-height: 1.55; max-width: none; }
+  .vente-jour { display: inline-block; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--or-dk); margin-top: .4rem; font-weight: 500; }
+
+  /* DÉMARCHE */
+  #demarche { background: var(--brun); }
+  #demarche h2 { color: var(--ivoire); }
+  #demarche .section-label { color: var(--or-lt); }
+  #demarche .section-label::after { background: var(--or-lt); }
+  #demarche .lead { color: rgba(245,240,227,.55); }
+  .steps { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border: 1px solid rgba(255,255,255,.08); }
+  .step { padding: 2.2rem 1.8rem; border-right: 1px solid rgba(255,255,255,.08); border-bottom: 1px solid rgba(255,255,255,.08); }
+  .step:last-child { border-right: none; }
+  .step-num { font-family: 'Cormorant', Georgia, serif; font-size: 3rem; font-weight: 700; color: rgba(196,149,32,.18); line-height: 1; margin-bottom: .4rem; }
+  .step h3 { font-family: 'Cormorant', Georgia, serif; font-size: 1.15rem; font-weight: 600; color: var(--or-lt); margin-bottom: .6rem; }
+  .step p { font-size: .9rem; color: rgba(245,240,227,.6); line-height: 1.65; max-width: none; }
+
+  /* TRITICUM */
+  #triticum { border-bottom: 1px solid var(--border); }
+  .triticum-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; margin-top: 2.5rem; }
+  @media (max-width: 600px) { .triticum-inner { grid-template-columns: 1fr; gap: 2rem; } }
+  .triticum-quote { font-family: 'Cormorant', Georgia, serif; font-size: 1.3rem; font-style: italic; color: var(--taupe); line-height: 1.6; border-left: 3px solid var(--or); padding-left: 1.5rem; max-width: none; }
+
+
+  .nav-links a.nav-cta { background: var(--or-dk); color: #fff; padding: .45rem 1rem; }
+  .nav-links a.nav-cta:hover { background: var(--or); color: #fff; }
+  .btn-commander {
+    display: inline-block; margin-top: 2rem; background: var(--or-dk); color: #fff;
+    padding: .95rem 2.2rem; font-size: .8rem; font-weight: 500; letter-spacing: .18em;
+    text-transform: uppercase; text-decoration: none; transition: background .2s;
+  }
+  .btn-commander:hover { background: var(--or); }
+  .btn-inline { margin-top: 0; margin-bottom: 2rem; }
+  .vente-grid + p a, .footer-contact a { text-underline-offset: 3px; }
+
+  /* FOOTER */
+  footer { background: var(--brun); color: rgba(245,240,227,.65); padding: 4rem 2rem 3rem; text-align: center; }
+  .footer-logo-text { font-family: 'Cormorant', Georgia, serif; font-size: 2rem; font-weight: 600; color: var(--ivoire); margin-bottom: .5rem; }
+  .footer-tagline { font-family: 'Cormorant', Georgia, serif; font-style: italic; font-size: 1rem; color: rgba(245,240,227,.5); margin-bottom: 2rem; }
+  .footer-divider { width: 48px; height: 1px; background: var(--or); margin: 1.5rem auto; opacity: .5; }
+  .footer-contact { font-size: .88rem; line-height: 1.9; color: rgba(245,240,227,.55); margin-bottom: 1.5rem; }
+  .footer-contact strong { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--or); display: block; margin-bottom: .4rem; }
+  .footer-social { display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; }
+  .footer-social a { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--or-lt); text-decoration: none; }
+  .footer-social a:hover { color: #fff; }
+  .footer-bottom { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.07); font-size: .75rem; color: rgba(245,240,227,.25); }
+
+  @media (max-width: 480px) {
+    nav { padding: .8rem 1rem; }
+    .nav-links { gap: 1rem; }
+    section { padding: 3rem 1.2rem; }
+    footer { padding: 3rem 1.2rem 2rem; }
+  }
+</style>
+
+<nav>
+  <ul class="nav-links">
+    <li><a href="#manifeste">Notre histoire</a></li>
+    <li><a href="#pain">Notre pain</a></li>
+    <li><a href="#bles">Blés anciens</a></li>
+    <li><a href="#gamme">La gamme</a></li>
+    <li><a href="#vente">Où nous trouver</a></li>
+    <li><a href="#clickcollect">Click & Collect</a></li>
+    <li><a href="#demarche">Démarche</a></li>
+    <li><a href="#triticum">Triticum</a></li>
+    <li><a href="/" class="nav-cta">Commander</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <img src="/assets/logo-presentation.png" alt="Le Pain Levé" class="hero-logo">
+  <p class="hero-claim">De la farine · De l'eau · Du temps</p>
+  <div class="hero-divider">Franqueville-Saint-Pierre · Normandie</div>
+  <p class="hero-intro">« Ce pain vivant, sain et nourrissant est un retour au pain d'antan et au savoir-faire des anciens. »</p>
+  <div class="hero-tags">
+    <span class="tag">100 % levain naturel</span>
+    <span class="tag">Blés anciens bio</span>
+    <span class="tag">85 % local</span>
+    <span class="tag">Fermentation longue</span>
+  </div>
+  <a href="/" class="btn-commander">Commander mon pain</a>
+</section>
+
+<section id="manifeste">
+  <div class="container">
+    <p class="section-label">Notre histoire</p>
+    <h2>Un retour aux sources du vrai pain</h2>
+    <div class="manifeste-body">
+      <div>
+        <p>Le Pain Levé est né à Rouen en septembre 2019 d'une conviction simple : le pain que l'on mange aujourd'hui a perdu l'essentiel de ce qui faisait sa valeur nutritionnelle, gustative et culturelle.</p>
+        <p>Blés hybrides sélectionnés pour le rendement, levures industrielles, fermentation express d'une heure ou deux : la boulangerie moderne a sacrifié la qualité à la vitesse.</p>
+      </div>
+      <div>
+        <p>Nous avons fait le choix inverse. Depuis nos débuts, Le Pain Levé travaille exclusivement des variétés de blés anciens, cultivées et moulues dans la tradition, pour des pains au levain naturel, façonnés à la main et fermentés lentement, entre 16 et 18 heures.</p>
+        <p>Un pain plus riche en nutriments, plus digeste, plus savoureux — et qui se conserve naturellement plusieurs jours. Comme le pain d'avant.</p>
+      </div>
+      <div class="manifeste-quote">
+        « Nous ne réinventons pas le pain. Nous lui rendons ce que l'industrie lui avait retiré. »
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pain">
+  <div class="container">
+    <p class="section-label">Notre philosophie</p>
+    <h2>Un pain qui renoue avec la tradition</h2>
+    <div class="pain-grid">
+      <div>
+        <p>Pétri lentement afin de préserver au mieux les nutriments présents dans la farine, ce pain renoue avec la tradition des panifications sans ajout de levure : <strong>100 % au levain naturel</strong> et aux farines bio de blés anciens majoritairement (85 %) locales.</p>
+        <p style="margin-top:1rem">La fermentation longue — jusqu'à 16 heures — développe les arômes subtils du pain, améliore la digestibilité ainsi que sa conservation : <strong>4 à 6 jours dans un linge</strong>.</p>
+      </div>
+      <div>
+        <p>Pas d'additifs, pas de levure industrielle, pas de compromis. Seulement la farine, l'eau, le sel, le temps — et le savoir-faire du boulanger.</p>
+        <p style="margin-top:1rem">Ce pain vivant, sain et nourrissant est un retour au pain d'antan et au savoir-faire des anciens.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="bles">
+  <div class="container">
+    <p class="section-label">Pourquoi les blés anciens ?</p>
+    <h2>Des céréales oubliées, retrouvées</h2>
+    <p class="lead">Les variétés populations cultivées avant le XX<sup>e</sup> siècle n'ont jamais été sélectionnées pour le rendement industriel. Elles ont conservé ce que les blés modernes ont perdu.</p>
+
+    <div class="bles-grid">
+      <div class="bles-card">
+        <div class="bles-card-icon">🌾</div>
+        <h3>Richesse nutritionnelle</h3>
+        <p>Les blés anciens sont naturellement plus riches en <strong>fer, zinc et magnésium</strong>. Leur composition en acides aminés et en micronutriments est plus complète que celle des variétés modernes, dont la sélection a priorité le rendement sur la valeur nutritive.</p>
+      </div>
+      <div class="bles-card">
+        <div class="bles-card-icon">🫁</div>
+        <h3>Meilleure tolérance au gluten</h3>
+        <p>Le gluten des blés anciens (Rouge de Bordeaux, Poulard, Grand Épeautre…) est structurellement différent de celui des blés modernes : moins élastique, moins résistant aux enzymes digestives. Combiné à la fermentation longue au levain, il est <strong>beaucoup mieux toléré</strong> par un grand nombre de personnes sensibles.</p>
+      </div>
+      <div class="bles-card">
+        <div class="bles-card-icon">🌿</div>
+        <h3>Bénéfice pour la biodiversité</h3>
+        <p>Les variétés populations ne sont pas brevetées et peuvent être librement reproduites. Cultivées en agriculture biologique, elles favorisent la vie des sols, accueillent une plus grande faune auxiliaire et participent à la <strong>résilience des agroécosystèmes</strong> locaux face aux aléas climatiques.</p>
+      </div>
+      <div class="bles-card">
+        <div class="bles-card-icon">🏡</div>
+        <h3>Production locale &amp; circuits courts</h3>
+        <p>85 % de nos farines sont cultivées et moulues en Normandie, en partenariat avec l'association Triticum. Soutenir Le Pain Levé, c'est soutenir une agriculture paysanne locale, sans intrants chimiques, à taille humaine.</p>
+      </div>
+    </div>
+
+    <div class="bles-note">
+      « Les blés anciens s'inscrivent dans une logique agro-écologique globale : des sols vivants, des variétés adaptées au terroir, une alimentation saine pour les consommateurs et un revenu juste pour les paysans. »
+    </div>
+  </div>
+</section>
+
+<section id="gamme">
+  <div class="container">
+    <p class="section-label">Ce que nous proposons</p>
+    <h2>La gamme</h2>
+    <p class="lead">Des pains façonnés à la main, en formats variés, pour accompagner tous les moments du repas.</p>
+    <div class="gamme-grid">
+      <div class="gamme-card">
+        <h3>Pains de 700 g</h3>
+        <ul>
+          <li>Campagne</li><li>Complet</li><li>Aux noix</li><li>Aux graines</li><li>Aux raisins</li>
+        </ul>
+      </div>
+      <div class="gamme-card">
+        <h3>Le Gros</h3>
+        <ul><li>Format 2 kg</li><li>Format 3 kg</li></ul>
+      </div>
+      <div class="gamme-card">
+        <h3>Pains moulés 500 g</h3>
+        <ul><li>Poulard</li><li>Grand Épeautre</li><li>Méteil</li><li>Nordique</li></ul>
+      </div>
+      <div class="gamme-card">
+        <h3>Également</h3>
+        <ul><li>Brioche</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="vente">
+  <div class="container">
+    <p class="section-label">Où nous trouver</p>
+    <h2>Points de vente</h2>
+    <p class="lead">Nos pains sont disponibles sur plusieurs marchés et épiceries de la région rouennaise.</p>
+    <div class="vente-grid">
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Le marché du Robec</h4>
+          <p>247 rue eau de Robec, Rouen</p>
+          <span class="vente-jour">Livraison mer. → sam.</span>
+        </div>
+      </div>
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Le Comptoir Du Vrac</h4>
+          <p>5 place du général de Gaulle, Mesnil Esnard</p>
+          <span class="vente-jour">Livraison mer. et ven.</span>
+        </div>
+      </div>
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Massenzio</h4>
+          <p>20 place St Amand, Rouen</p>
+          <span class="vente-jour">Sur commande</span>
+        </div>
+      </div>
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Les Ronches – Épicerie</h4>
+          <p>30 rue de l'église, Roncherolles-sur-le-Vivier</p>
+          <span class="vente-jour">Sur commande</span>
+        </div>
+      </div>
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Triticum</h4>
+          <p>Grandes serres du Champ des Bruyères, Rouen</p>
+          <span class="vente-jour">Le mercredi après-midi</span>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:2rem; font-size:.88rem; color: var(--taupe-lt)">Commandes : <a href="/" style="color: var(--or); text-decoration:none; font-weight:500">lepainleve.com</a> · <strong style="color: var(--taupe)">06 11 46 68 71</strong></p>
+  </div>
+</section>
+
+<section id="clickcollect">
+  <div class="container">
+    <p class="section-label">Commande en ligne</p>
+    <h2>Points de retrait Click &amp; Collect</h2>
+    <p class="lead">Commandez votre pain en ligne et retirez-le à l'un de nos points de retrait partenaires.</p>
+    <a href="/" class="btn-commander btn-inline">Commander en ligne</a>
+    <div class="vente-grid">
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Massenzio</h4>
+          <p>20 place St Amand, Rouen</p>
+        </div>
+      </div>
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Marché du Robec</h4>
+          <p>247 rue eau de Robec, Rouen</p>
+        </div>
+      </div>
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>Fanny Pâtisserie</h4>
+          <p>7 place du 19 avril 1944, Rouen</p>
+        </div>
+      </div>
+      <div class="vente-card">
+        <div class="vente-dot"></div>
+        <div>
+          <h4>La Fromagerie du vieux marché</h4>
+          <p>18 rue Rollon, Rouen</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="demarche">
+  <div class="container">
+    <p class="section-label">De la graine au pain</p>
+    <h2>Notre démarche</h2>
+    <p class="lead">Chaque choix engage notre rapport au vivant — la semence, la mouture, la fermentation.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Les semences paysannes</h3>
+        <p>Des variétés populations d'avant la Première Guerre mondiale, libres de tout brevet, cultivées localement avec l'association Triticum sur des parcelles normandes.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>La mouture artisanale</h3>
+        <p>Des farines complètes ou semi-complètes, écrasées sur meule de pierre, qui préservent le son et le germe — là où se concentrent les minéraux, les vitamines et les acides aminés essentiels.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>La fermentation longue</h3>
+        <p>Notre levain naturel, entretenu chaque jour, ensemence la pâte. Jusqu'à 16 heures de fermentation lente pour développer les arômes et favoriser la digestibilité.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="triticum">
+  <div class="container">
+    <p class="section-label">Nos partenaires</p>
+    <h2>Des filières engagées</h2>
+    <p class="lead">Nos farines proviennent de producteurs partageant les mêmes valeurs : semences paysannes, agriculture biologique, circuits courts.</p>
+
+    <div class="triticum-inner" style="margin-bottom: 3.5rem">
+      <div>
+        <h3 style="font-family:'Cormorant',Georgia,serif; font-size:1.4rem; font-weight:600; color:var(--brun); margin-bottom:.8rem">Triticum — Normandie</h3>
+        <p>Triticum est une association citoyenne basée à Rouen qui met en œuvre un <strong>travail de sélection autour des céréales anciennes</strong> afin de protéger et développer ce patrimoine vivant, et trouver les variétés adaptées à l'agriculture de demain. </p>
+        <p style="margin-top:1rem">Elle réunit jardiniers, enseignants, paysans-boulangers, meuniers et brasseurs autour d'un objectif commun : conserver et cultiver des variétés paysannes et développer des filières locales en agriculture biologique. Triticum organise également des ateliers participatifs autour des céréales et de l'agroécologie.</p>
+        <p style="margin-top:1.2rem; font-size:.88rem"><a href="https://www.triticum.fr" target="_blank" style="color: var(--or); text-decoration: none;">triticum.fr →</a></p>
+      </div>
+      <div>
+        <p class="triticum-quote">« 75 % de la biodiversité cultivée a disparu en un siècle de développement technique artificiel. »</p>
+        <p style="margin-top:1.2rem; font-size:.82rem; color: var(--taupe-lt)">— Association Triticum</p>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 3rem">
+      <div class="triticum-inner">
+        <div>
+          <h3 style="font-family:'Cormorant',Georgia,serif; font-size:1.4rem; font-weight:600; color:var(--brun); margin-bottom:.8rem">Fleur de Berry — Berry (36)</h3>
+          <p>Exploitation familiale située à Aigurande, dans le sud du Berry. Geert, Heidi et leur fils Joachim ont fait le choix de <strong>semer et transformer uniquement des variétés anciennes</strong> pour leurs valeurs nutritives que l'on ne retrouve plus dans l'agriculture moderne.</p>
+          <p style="margin-top:1rem">Inspirés par Sainte Hildegarde de Bingen, ils cultivent notamment l'épeautre non hybridé Oberkulmer Rotkorn — « la reine des céréales » — et produisent des farines sans additifs sur meule de pierre. Tous leurs produits sont cultivés, transformés et vendus par leurs soins.</p>
+          <p style="margin-top:1.2rem; font-size:.88rem"><a href="https://www.fleurdeberry.fr" target="_blank" style="color: var(--or); text-decoration: none;">fleurdeberry.fr →</a></p>
+        </div>
+        <div>
+          <div style="margin-top:0; display:flex; flex-wrap:wrap; gap:.5rem">
+            <span style="font-size:.78rem; padding:.3rem .8rem; border:1px solid var(--border); color:var(--taupe-lt)">Épeautre Oberkulmer Rotkorn</span>
+            <span style="font-size:.78rem; padding:.3rem .8rem; border:1px solid var(--border); color:var(--taupe-lt)">Petit épeautre</span>
+            <span style="font-size:.78rem; padding:.3rem .8rem; border:1px solid var(--border); color:var(--taupe-lt)">Seigle</span>
+            <span style="font-size:.78rem; padding:.3rem .8rem; border:1px solid var(--border); color:var(--taupe-lt)">Sarrasin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo-text">Le Pain Levé</div>
+  <p class="footer-tagline">Levain naturel · Blés anciens · Normandie</p>
+  <div class="footer-divider"></div>
+  <div class="footer-contact">
+    <strong>Commandes &amp; contact</strong>
+    <a href="/" style="color:var(--or);text-decoration:none;">lepainleve.com</a><br>
+    06 11 46 68 71<br>
+    <a href="mailto:contact@lepainleve.com" style="color:var(--or);text-decoration:none;">contact@lepainleve.com</a>
+  </div>
+  <div class="footer-social">
+    <a href="https://www.instagram.com/lepainleve/" target="_blank">Instagram @lepainleve</a>
+    <a href="https://www.facebook.com/lepainleve/" target="_blank">Facebook</a>
+  </div>
+  <div class="footer-bottom">© 2026 Le Pain Levé · Franqueville-Saint-Pierre · <a href="/mentions-legales.html" style="color:inherit;">Mentions légales</a></div>
+</footer>
+</body>
+</html>

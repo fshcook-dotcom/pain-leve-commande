@@ -50,8 +50,34 @@ export async function handleWebhook(request, env) {
         }
       }
 
-      // ---- Commande récurrente : transmission au Google Sheet ----
       const meta = session.metadata || {};
+
+      // ---- Toute commande payée : transmission au Google Sheet ----
+      // (onglets "Saisie du jour" et "Click&collect"). L'identifiant de la
+      // session Stripe sert d'anti-doublon côté Sheet.
+      if (env.GOOGLE_SHEET_WEBHOOK_URL && session.payment_status === "paid" && meta.epicerieId && meta.itemsEncoded) {
+        try {
+          await fetch(env.GOOGLE_SHEET_WEBHOOK_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              secret: env.GOOGLE_SHEET_WEBHOOK_SECRET || "",
+              action: "commande",
+              sessionId: session.id,
+              epicerieId: meta.epicerieId,
+              place: meta.epicerie,
+              pickupDate: meta.pickupDate,
+              itemsEncoded: meta.itemsEncoded,
+              amountTotal: session.amount_total,
+            }),
+          });
+        } catch (err) {
+          // La commande est payée : on ne fait pas échouer le webhook pour ça.
+          console.error("Erreur transmission de la commande vers le Google Sheet :", err);
+        }
+      }
+
+      // ---- Commande récurrente : transmission au Google Sheet ----
       if (meta.recurring === "yes" && meta.recurringPhone && env.GOOGLE_SHEET_WEBHOOK_URL) {
         try {
           await fetch(env.GOOGLE_SHEET_WEBHOOK_URL, {

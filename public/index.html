@@ -37,7 +37,25 @@
   header{
     margin-bottom:34px;
     text-align:center;
+    position:relative;
   }
+  .demarche-btn{
+    position:absolute;
+    top:-18px;
+    right:0;
+    font-size:0.58rem;
+    font-weight:500;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    text-decoration:none;
+    color:var(--wheat-deep);
+    border:1px solid var(--line);
+    padding:3px 8px;
+    white-space:nowrap;
+    background:transparent;
+    transition:background .15s ease,color .15s ease,border-color .15s ease;
+  }
+  .demarche-btn:hover{ background:var(--wheat-deep); color:#fff; border-color:var(--wheat-deep); }
   .logo{
     width:148px;
     height:auto;
@@ -327,8 +345,10 @@
 <div class="wrap">
 
   <header>
+    <a class="demarche-btn" href="histoire/">Qui sommes-nous</a>
     <img class="logo" src="assets/logo.png" alt="Le Pain Levé — artisanal & local">
     <p class="tag">De la farine, de l'eau, du temps</p>
+    
   </header>
 
   <section>
@@ -379,7 +399,7 @@
     <p>Vous connaissez quelqu'un qui cherche du bon pain près de chez lui ? Ce lien fonctionne pour tout le monde — n'hésitez pas à le partager.</p>
   </div>
 
-  <footer>Le Pain Levé — Rouen · @lepainleve · <a href="mentions-legales.html" style="color:inherit;">Mentions légales</a></footer>
+  <footer><a href="histoire/" style="color:inherit;">Qui sommes-nous</a> · Rouen · @lepainleve · <a href="mentions-legales.html" style="color:inherit;">Mentions légales</a></footer>
 </div>
 
 <script>
@@ -390,6 +410,8 @@
   const EPICERIES = [
     { id: "fanny",     place: "Fanny pâtisserie",       commune: "7 place du 19 avril 1944, Rouen", days: [3,4,5,6] },
     { id: "massenzio", place: "Massenzio",              commune: "20 place Saint Amand, Rouen",      days: [3,4,5,6] },
+    { id: "robec",     place: "Marché du Robec",        commune: "247 rue eau de Robec, Rouen",      days: [3,4,5,6] },
+    { id: "fromagerie", place: "La Fromagerie du vieux marché", commune: "18 rue Rollon, Rouen",     days: [3,4,5,6] },
   ];
   const DAY_NAMES = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
 
