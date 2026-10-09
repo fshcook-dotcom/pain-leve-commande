@@ -29,6 +29,8 @@ const EPICERIES = [
   { id: "massenzio", place: "Massenzio",               days: [3,4,5,6] },
   { id: "robec",     place: "Marché du Robec",         days: [3,4,5,6] },
   { id: "fromagerie", place: "La Fromagerie du vieux marché", days: [3,4,5,6] },
+  { id: "ronches",   place: "Épicerie Les Ronches",    days: [5] },
+  { id: "comptoir",  place: "Le Comptoir du Vrac",     days: [3,5] },
 ];
 
 const MAX_QTY_PER_PRODUCT = 20;
