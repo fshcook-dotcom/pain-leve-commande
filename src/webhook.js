@@ -52,6 +52,9 @@ export async function handleWebhook(request, env) {
 
       const meta = session.metadata || {};
 
+      // Nom de la personne qui a payé (nom saisi dans le formulaire de paiement Stripe).
+      const customerName = String((session.customer_details && session.customer_details.name) || "").trim();
+
       // ---- Toute commande payée : transmission au Google Sheet ----
       // (onglets "Saisie du jour" et "Click&collect"). L'identifiant de la
       // session Stripe sert d'anti-doublon côté Sheet.
@@ -69,6 +72,8 @@ export async function handleWebhook(request, env) {
               pickupDate: meta.pickupDate,
               itemsEncoded: meta.itemsEncoded,
               amountTotal: session.amount_total,
+              customerName: customerName,
+              customerEmail: (session.customer_details && session.customer_details.email) || "",
             }),
           });
         } catch (err) {
@@ -89,6 +94,7 @@ export async function handleWebhook(request, env) {
               epicerieId: meta.epicerieId,
               itemsEncoded: meta.itemsEncoded,
               pickupDate: meta.pickupDate,
+              customerName: customerName,
             }),
           });
         } catch (err) {
