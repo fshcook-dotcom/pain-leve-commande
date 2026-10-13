@@ -120,6 +120,9 @@ export async function handleCheckout(request, env) {
       // Téléphone demandé sur la page de paiement Stripe (pour joindre le client en cas de souci
       // au point de retrait). Pas pour les commandes récurrentes : il a déjà été saisi sur le site.
       phone_number_collection: { enabled: recurring ? false : true },
+      // Message affiché au-dessus du bouton de paiement (le texte de l'infobulle du champ téléphone,
+      // lui, est imposé par Stripe et ne peut pas être modifié).
+      custom_text: { submit: { message: "Votre numéro nous sert uniquement à vous joindre en cas d'imprévu pour votre commande." } },
       client_reference_id: `${epicerie.place} | ${pickupDate}`,
       metadata: {
         epicerie: epicerie.place,
