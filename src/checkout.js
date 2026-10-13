@@ -117,6 +117,9 @@ export async function handleCheckout(request, env) {
     const session = await stripeRequest(env, "POST", "/v1/checkout/sessions", {
       mode: "payment",
       line_items,
+      // Téléphone demandé sur la page de paiement Stripe (pour joindre le client en cas de souci
+      // au point de retrait). Pas pour les commandes récurrentes : il a déjà été saisi sur le site.
+      phone_number_collection: { enabled: recurring ? false : true },
       client_reference_id: `${epicerie.place} | ${pickupDate}`,
       metadata: {
         epicerie: epicerie.place,

@@ -54,6 +54,8 @@ export async function handleWebhook(request, env) {
 
       // Nom de la personne qui a payé (nom saisi dans le formulaire de paiement Stripe).
       const customerName = String((session.customer_details && session.customer_details.name) || "").trim();
+      // Téléphone : saisi sur la page de paiement Stripe, ou à défaut celui de la commande récurrente.
+      const customerPhone = String((session.customer_details && session.customer_details.phone) || meta.recurringPhone || "").trim();
 
       // ---- Toute commande payée : transmission au Google Sheet ----
       // (onglets "Saisie du jour" et "Click&collect"). L'identifiant de la
@@ -74,6 +76,7 @@ export async function handleWebhook(request, env) {
               amountTotal: session.amount_total,
               customerName: customerName,
               customerEmail: (session.customer_details && session.customer_details.email) || "",
+              customerPhone: customerPhone,
             }),
           });
         } catch (err) {
