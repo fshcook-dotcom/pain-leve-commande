@@ -22,6 +22,7 @@ const PRODUCTS = [
   { id: "campagne2kg",  name: "Campagne 2 kg",        price: 21.4 },
   { id: "campagne3kg",  name: "Campagne 3 kg",        price: 32 },
   { id: "brioche300",   name: "Brioche 300 g",        price: 7,   days: [5] },
+  { id: "ciabatta4",    name: "Ciabattas 160 g (lot de 4)", price: 8.4 },
 ];
 
 const EPICERIES = [
