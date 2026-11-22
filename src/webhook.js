@@ -15,6 +15,28 @@ const reply = (body, status = 200) =>
     headers: { "Content-Type": typeof body === "string" ? "text/plain; charset=utf-8" : "application/json" },
   });
 
+// Envoie une charge utile au Google Sheet (script Apps Script). Renvoie true
+// seulement si le script répond {"ok": true}. Sinon : false (et une trace dans
+// les journaux), pour que le webhook puisse demander à Stripe de réessayer.
+async function envoyerAuSheet(env, payload) {
+  try {
+    const res = await fetch(env.GOOGLE_SHEET_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret: env.GOOGLE_SHEET_WEBHOOK_SECRET || "", ...payload }),
+    });
+    const texte = await res.text();
+    let data = null;
+    try { data = JSON.parse(texte); } catch (e) { /* réponse non JSON */ }
+    if (res.ok && data && data.ok === true) return true;
+    console.error("Le Google Sheet n'a pas confirmé la transmission :", res.status, texte.slice(0, 300));
+    return false;
+  } catch (err) {
+    console.error("Erreur transmission vers le Google Sheet :", err);
+    return false;
+  }
+}
+
 export async function handleWebhook(request, env) {
   if (request.method !== "POST") return new Response(null, { status: 405 });
 
@@ -33,6 +55,7 @@ export async function handleWebhook(request, env) {
     return reply(`Webhook Error: ${err.message}`, 400);
   }
 
+  let sheetOk = true;
   try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
@@ -61,52 +84,36 @@ export async function handleWebhook(request, env) {
       // (onglets "Saisie du jour" et "Click&collect"). L'identifiant de la
       // session Stripe sert d'anti-doublon côté Sheet.
       if (env.GOOGLE_SHEET_WEBHOOK_URL && session.payment_status === "paid" && meta.epicerieId && meta.itemsEncoded) {
-        try {
-          await fetch(env.GOOGLE_SHEET_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              secret: env.GOOGLE_SHEET_WEBHOOK_SECRET || "",
-              action: "commande",
-              sessionId: session.id,
-              epicerieId: meta.epicerieId,
-              place: meta.epicerie,
-              pickupDate: meta.pickupDate,
-              itemsEncoded: meta.itemsEncoded,
-              amountTotal: session.amount_total,
-              customerName: customerName,
-              customerEmail: (session.customer_details && session.customer_details.email) || "",
-              customerPhone: customerPhone,
-            }),
-          });
-        } catch (err) {
-          // La commande est payée : on ne fait pas échouer le webhook pour ça.
-          console.error("Erreur transmission de la commande vers le Google Sheet :", err);
-        }
+        const ok = await envoyerAuSheet(env, {
+          action: "commande",
+          sessionId: session.id,
+          epicerieId: meta.epicerieId,
+          place: meta.epicerie,
+          pickupDate: meta.pickupDate,
+          itemsEncoded: meta.itemsEncoded,
+          amountTotal: session.amount_total,
+          customerName: customerName,
+          customerEmail: (session.customer_details && session.customer_details.email) || "",
+          customerPhone: customerPhone,
+        });
+        if (!ok) sheetOk = false;
       }
 
       // ---- Commande récurrente : transmission au Google Sheet ----
       if (meta.recurring === "yes" && meta.recurringPhone && env.GOOGLE_SHEET_WEBHOOK_URL) {
-        try {
-          await fetch(env.GOOGLE_SHEET_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              secret: env.GOOGLE_SHEET_WEBHOOK_SECRET || "",
-              phone: meta.recurringPhone,
-              epicerieId: meta.epicerieId,
-              itemsEncoded: meta.itemsEncoded,
-              pickupDate: meta.pickupDate,
-              customerName: customerName,
-            }),
-          });
-        } catch (err) {
-          // La commande est déjà payée : on ne fait surtout pas échouer le
-          // webhook pour ça. C'est juste la mémorisation "récurrente" qui rate.
-          console.error("Erreur transmission vers le Google Sheet :", err);
-        }
+        const ok = await envoyerAuSheet(env, {
+          phone: meta.recurringPhone,
+          epicerieId: meta.epicerieId,
+          itemsEncoded: meta.itemsEncoded,
+          pickupDate: meta.pickupDate,
+          customerName: customerName,
+        });
+        if (!ok) sheetOk = false;
       }
     }
+    // Le Sheet n'a pas confirmé : on répond une erreur pour que Stripe réessaie
+    // (les doublons sont ignorés côté Sheet grâce à l'identifiant de session).
+    if (!sheetOk) return reply({ received: false, error: "Google Sheet non confirmé, nouvelle tentative demandée." }, 500);
     return reply({ received: true });
   } catch (err) {
     console.error("Erreur lors du traitement du webhook :", err);
